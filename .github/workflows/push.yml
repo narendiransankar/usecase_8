@@ -1,0 +1,78 @@
+name: Build & Deploy: Docker Images to ECR + Terraform Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: ap-south-1
+  PATIENT_REPO: 012889719104.dkr.ecr.ap-south-1.amazonaws.com/patient-service
+  APPOINTMENT_REPO: 012889719104.dkr.ecr.ap-south-1.amazonaws.com/appointment-service
+
+jobs:
+  build-push-and-terraform:
+    name: Build & Push Docker Images, Then Deploy Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::012889719104:role/oidc_role
+          aws-region: ${{ env.AWS_REGION }}
+
+      ### PATIENT-SERVICE IMAGE ###
+      - name: Login to ECR (patient-service)
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | \
+          docker login --username AWS --password-stdin $PATIENT_REPO
+
+      - name: Build Docker image (patient-service)
+        working-directory: ./patient-service
+        run: |
+          docker build -t patient-service:latest .
+
+      - name: Tag Docker image (patient-service)
+        run: |
+          docker tag patient-service:latest $PATIENT_REPO:latest
+
+      - name: Push Docker image to ECR (patient-service)
+        run: |
+          docker push $PATIENT_REPO:latest
+
+      ### APPOINTMENT-SERVICE IMAGE ###
+      - name: Login to ECR (appointment-service)
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | \
+          docker login --username AWS --password-stdin $APPOINTMENT_REPO
+
+      - name: Build Docker image (appointment-service)
+        working-directory: ./appointment-service
+        run: |
+          docker build -t appointment-service:latest .
+
+      - name: Tag Docker image (appointment-service)
+        run: |
+          docker tag appointment-service:latest $APPOINTMENT_REPO:latest
+
+      - name: Push Docker image to ECR (appointment-service)
+        run: |
+          docker push $APPOINTMENT_REPO:latest
+
+      ### TERRAFORM DEPLOY ###
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init -reconfigure
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
