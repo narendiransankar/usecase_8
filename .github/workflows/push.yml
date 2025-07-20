@@ -3,9 +3,9 @@ name: Build & Deploy Docker Images to ECR and Terraform Deploy
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
 
 env:
   AWS_REGION: ap-south-1
