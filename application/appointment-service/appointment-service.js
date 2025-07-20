@@ -16,7 +16,7 @@ const express = require('express');
     
     app.get('/appointments', (req, res) => {
       res.json({ 
-        message: 'Appointments retrieved successfully',
+        message: 'new Appointments retrieved successfully',
         count: appointments.length,
         appointments: appointments 
       });
