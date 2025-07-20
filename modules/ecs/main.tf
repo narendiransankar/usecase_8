@@ -180,7 +180,7 @@ resource "aws_ecs_task_definition" "patient_service" {
   container_definitions = jsonencode([
     {
       name  = "patient-service"
-      image = "${var.patient_repo_uri}:v1"
+      image = "${var.patient_repo_uri}:latest"
       
       portMappings = [
         {
@@ -249,7 +249,7 @@ resource "aws_ecs_task_definition" "appointment_service" {
   container_definitions = jsonencode([
     {
       name  = "appointment-service"
-      image = "${var.appointment_repo_uri}:v1"
+      image = "${var.appointment_repo_uri}:latest"
       
       portMappings = [
         {
