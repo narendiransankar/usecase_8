@@ -1,4 +1,5 @@
-name: Build & Deploy: Docker Images to ECR + Terraform Deploy
+
+name: Build & Deploy Docker Images to ECR and Terraform Deploy
 
 on:
   workflow_dispatch:
