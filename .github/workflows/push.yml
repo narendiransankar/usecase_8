@@ -36,7 +36,8 @@ jobs:
           docker login --username AWS --password-stdin $PATIENT_REPO
 
       - name: Build Docker image (patient-service)
-        working-directory: ./patient-service
+        working-directory: ./application/patient-service
+
         run: |
           docker build -t patient-service:latest .
 
@@ -55,7 +56,7 @@ jobs:
           docker login --username AWS --password-stdin $APPOINTMENT_REPO
 
       - name: Build Docker image (appointment-service)
-        working-directory: ./appointment-service
+        working-directory: ./application/appointment-service
         run: |
           docker build -t appointment-service:latest .
 
