@@ -9,8 +9,7 @@ on:
 
 env:
   AWS_REGION: ap-south-1
-  PATIENT_REPO: 012889719104.dkr.ecr.ap-south-1.amazonaws.com/patient-service
-  APPOINTMENT_REPO: 012889719104.dkr.ecr.ap-south-1.amazonaws.com/appointment-service
+  API_FLASK_REPO: 012889719104.dkr.ecr.ap-south-1.amazonaws.com/patient-service
 
 jobs:
   build-push-and-terraform:
@@ -29,44 +28,23 @@ jobs:
           role-to-assume: arn:aws:iam::012889719104:role/oidc_role
           aws-region: ${{ env.AWS_REGION }}
 
-      ### PATIENT-SERVICE IMAGE ###
-      - name: Login to ECR (patient-service)
+      - name: Login to ECR 
         run: |
           aws ecr get-login-password --region $AWS_REGION | \
-          docker login --username AWS --password-stdin $PATIENT_REPO
+          docker login --username AWS --password-stdin $API_FLASK_REPO
 
-      - name: Build Docker image (patient-service)
-        working-directory: ./application/patient-service
-
+      - name: Build Docker image 
+        working-directory: ./application/api-flask-repo
         run: |
-          docker build -t patient-service:latest .
+          docker build -t api-flask:latest .
 
-      - name: Tag Docker image (patient-service)
+      - name: Tag Docker image 
         run: |
-          docker tag patient-service:latest $PATIENT_REPO:latest
-
-      - name: Push Docker image to ECR (patient-service)
-        run: |
-          docker push $PATIENT_REPO:latest
-
-      ### APPOINTMENT-SERVICE IMAGE ###
-      - name: Login to ECR (appointment-service)
-        run: |
-          aws ecr get-login-password --region $AWS_REGION | \
-          docker login --username AWS --password-stdin $APPOINTMENT_REPO
-
-      - name: Build Docker image (appointment-service)
-        working-directory: ./application/appointment-service
-        run: |
-          docker build -t appointment-service:latest .
-
-      - name: Tag Docker image (appointment-service)
-        run: |
-          docker tag appointment-service:latest $APPOINTMENT_REPO:latest
+          docker tag api-flask:latest 012889719104.dkr.ecr.ap-south-1.amazonaws.com/api-flask-repo:latest
 
       - name: Push Docker image to ECR (appointment-service)
         run: |
-          docker push $APPOINTMENT_REPO:latest
+          docker push 012889719104.dkr.ecr.ap-south-1.amazonaws.com/api-flask-repo:latest
 
       ### TERRAFORM DEPLOY ###
       - name: Set up Terraform
