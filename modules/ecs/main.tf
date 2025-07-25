@@ -188,17 +188,7 @@ resource "aws_ecs_task_definition" "patient_service" {
           protocol      = "tcp"
         }
       ]
-
-      healthCheck = {
-        command = [
-          "CMD-SHELL",
-          "curl -f http://localhost:3000/health || exit 1"
-        ]
-        interval    = 30
-        timeout     = 5
-        retries     = 3
-        startPeriod = 60
-      }
+  
 
       logConfiguration = {
         logDriver = "awslogs"
@@ -257,17 +247,6 @@ resource "aws_ecs_task_definition" "appointment_service" {
           protocol      = "tcp"
         }
       ]
-
-      healthCheck = {
-        command = [
-          "CMD-SHELL",
-          "curl -f http://localhost:3001/health || exit 1"
-        ]
-        interval    = 30
-        timeout     = 5
-        retries     = 3
-        startPeriod = 60
-      }
 
       logConfiguration = {
         logDriver = "awslogs"
