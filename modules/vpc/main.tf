@@ -33,16 +33,16 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_eip" "eip" {
-  count = var.nat_count
+  #count = var.nat_count
   tags = {
-    Name = "naren"
+    Name = "us_elasticip"
   }
 }
 
 resource "aws_nat_gateway" "nat" {
-  count         = var.nat_count
-  allocation_id = aws_eip.eip[count.index].id
-  subnet_id     = aws_subnet.public[count.index].id
+  #count         = var.pub_sub_count
+  allocation_id = aws_eip.eip.id
+  subnet_id     = aws_subnet.public[0].id
 }
 
 resource "aws_route_table" "public" {
@@ -63,20 +63,20 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 resource "aws_route_table" "private" {
-  count  = var.priv_sub_count
+  #count  = var.priv_sub_count
   vpc_id = aws_vpc.main.id
   tags = {
     Name = "Private-route"
   }
 }
 resource "aws_route" "private" {
-  count                  = var.nat_count
-  route_table_id         = aws_route_table.private[count.index].id
+  #count                  = var.nat_count
+  route_table_id         = aws_route_table.private.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_nat_gateway.nat[count.index].id
+  gateway_id             = aws_nat_gateway.nat.id
 }
 resource "aws_route_table_association" "private" {
   count          = var.priv_sub_count
   subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private[count.index].id
+  route_table_id = aws_route_table.private.id
 }
