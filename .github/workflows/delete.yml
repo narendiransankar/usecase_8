@@ -1,34 +1,38 @@
 name: Terraform Destroy
+
 on:
- workflow_dispatch:
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-south-1
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
- tf-destroy:
-   runs-on: ubuntu-22.04
-   permissions:
-      contents: write
-      pull-requests: write
-      id-token: write 
+  terraform-destroy:
+    runs-on: ubuntu-latest
 
-   steps:
-     - name: checkout repositry 
-       uses: actions/checkout@v3
-       
-     - name: Set up Terraform
-       uses: hashicorp/setup-terraform@v3
-       
-     - name: Configure AWS credentials (OIDC)
-       uses: aws-actions/configure-aws-credentials@v2
-       with:
-         role-to-assume: arn:aws:iam::012889719104:role/oidc_role
-         aws-region: ap-south-1
+    defaults:
+      run:
+        working-directory: usecase8
 
-     - name: Verify identity
-       run: aws sts get-caller-identity
-         
-     - name: Terraform Init
-       run: terraform init  
-        
-     - name: Terraform destroy
-       id: destroy
-       run: terraform destroy -auto-approve
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::012889719104:role/oidc_role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init -reconfigure
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
