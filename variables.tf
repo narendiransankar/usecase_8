@@ -16,10 +16,10 @@ variable "priv_sub_count" {
   type        = number
 }
 
-variable "nat_count" {
-  description = "Number of NAT gateways"
-  type        = number
-}
+#variable "nat_count" {
+#  description = "Number of NAT gateways"
+#  type        = number
+#}
 
 variable "patient_repo_uri" {
     description = "The Patient image repo URL"
