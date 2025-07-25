@@ -14,9 +14,9 @@ jobs:
   terraform-destroy:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: usecase8
+    # defaults:
+    #   run:
+    #     working-directory: usecase8
 
     steps:
       - name: Checkout repository
