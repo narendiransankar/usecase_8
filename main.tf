@@ -4,7 +4,7 @@ module "vpc" {
   vpc_cidr = var.vpc_cidr
   pub_sub_count  = var.pub_sub_count
   priv_sub_count = var.priv_sub_count
-  nat_count      = var.nat_count
+  #nat_count      = var.nat_count
 }
 module "alb" {
   source = "./modules/alb"
